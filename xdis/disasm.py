@@ -303,8 +303,9 @@ def disassemble_file(
             sip_hash,
         ) = load_module(pyc_filename)
     except Exception:
-        # Hack alert: we're using pyc_filename set as a proxy for whether the filename exists.
-        # check_object_path() will succeed if the file exists.
+        # Hack alert: we're using pyc_filename set as a proxy for
+        # whether the filename exists.  check_object_path() will
+        # succeed if the file exists.
         if pyc_filename is None:
             raise
         import os

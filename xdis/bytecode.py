@@ -20,7 +20,8 @@ Extracted from Python 3 dis module but generalized to
 allow running on Python 2.
 """
 
-import sys, types
+import sys
+import types
 
 from xdis.cross_dis import (
     format_code_info,
@@ -34,7 +35,10 @@ from xdis.opcodes.opcode_36 import format_CALL_FUNCTION, format_CALL_FUNCTION_EX
 from xdis.util import code2num, num2code
 from xdis.version_info import IS_PYPY
 
-VARIANT = "pypy" if IS_PYPY else None
+if IS_PYPY:
+    VARIANT = "pypy"
+else:
+    VARIANT = None
 
 from StringIO import StringIO
 
