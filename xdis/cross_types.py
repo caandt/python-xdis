@@ -21,7 +21,7 @@ another set of Pythons
 
 # From
 # https://stackoverflow.com/questions/196345/how-to-check-if-a-string-in-python-is-in-ascii
-def is_ascii(s: str) -> bool:
+def is_ascii(s):
     """Check if the characters in string s are in ASCII, U+0-U+7F."""
     return len(s) == len(s.encode())
 
@@ -35,7 +35,7 @@ class LongTypeForPython3(int):
     def __init__(self, value):
         self.value = value
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         """
         Replacement repr() and str() for Python3.
         This ensures we get the "L" suffix on long types.
@@ -52,9 +52,9 @@ class UnicodeForPython3(str):
     def __init__(self, value):
         self.value = value
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         r"""
-        Replacement repr() and str() for Python3.
+        Replacement repr() for Python3.
         This ensures we get the "u" suffix on unicode types,
         and also \u when the string is not ASCII representable
         """
@@ -70,7 +70,23 @@ class UnicodeForPython3(str):
         # Turn the unicode character into its Unicode code point,
         # but strip of the leading "0x".
         stripped_utf8 = utf8_value[len("0x") :]
-        unicode_codepoint = "".join(
-            (c if is_ascii(c) else hex(ord(c)) for c in stripped_utf8)
-        )
+        result = []
+        for c in stripped_utf8:
+            if is_ascii(c):
+                result.append.result(c)
+            else:
+                result.append.hex(ord(c))
+
+        unicode_codepoint = "".join(result)
         return r"u'\u%s'" % unicode_codepoint
+
+    def __str__(self):
+        try:
+            utf8_value = self.value.decode("utf-8")
+            # Do we need to handle utf-16 and utf-32?
+        except UnicodeDecodeError:
+            return "u'%s'" % str(self.value)[1:]
+
+        if is_ascii(utf8_value):
+            return "'%s'" % utf8_value
+        return "???"

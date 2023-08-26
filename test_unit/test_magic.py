@@ -1,5 +1,7 @@
-import unittest, sys
+import sys
+import unittest
 from xdis.version_info import IS_PYPY, version_tuple_to_str
+
 import xdis.magics as magics
 
 class TestMagics(unittest.TestCase):

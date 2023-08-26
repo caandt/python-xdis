@@ -15,7 +15,7 @@ from xdis import disassemble_file
 from xdis.version import __version__
 from xdis.version_info import PYTHON_VERSION_STR, PYTHON_VERSION_TRIPLE
 
-FORMATS=("xasm", "bytes", "classic", "extended", "extended-bytes", "header")
+FORMATS = ("xasm", "bytes", "classic", "extended", "extended-bytes", "header")
 
 program, ext = os.path.splitext(os.path.basename(__file__))
 
@@ -33,10 +33,10 @@ bytecode from Python 2.7.13 and vice versa.
 
 Options:
   -F | --format {xasm | bytes | classic | extended | extended-bytes | header}
-                     specifiy assembly output format
-  -V | --version     show version and stop
-  -h | --help        show this message
-  --header           Show only the module header information
+                     Specifiy assembly output format
+  -V | --version     Show version and stop
+  -h | --help        Show this message
+  --show-source      Show source line when line number changes
 
 Examples:
   pydisasm foo.pyc
@@ -46,7 +46,8 @@ Examples:
 
 """
 
-PATTERNS = ('*.pyc', '*.pyo')
+PATTERNS = ("*.pyc", "*.pyo")
+
 
 def main():
     """Disassembles a Python bytecode file.
@@ -56,9 +57,12 @@ def main():
     the Python interpreter used to run this program. For example, you can disassemble Python 3.6.9
     bytecode from Python 2.7.15 and vice versa.
     """
-    Usage_short = """usage:
+    Usage_short = (
+        """usage:
    %s FILE...
-Type -h for for full help.""" % program
+Type -h for for full help."""
+        % program
+    )
 
     if not ((2, 4) <= PYTHON_VERSION_TRIPLE < (2, 8)):
         mess = "This code works on 2.4 to 2.17."
@@ -77,32 +81,34 @@ Type -h for for full help.""" % program
         sys.exit(1)
 
     try:
-        opts, files = getopt.getopt(sys.argv[1:], 'hVUHF:',
-                                    ['help', 'version', 'header', 'format'])
-    except getopt.GetoptError, e:
-        sys.stderr.write('%s: %s\n' % (os.path.basename(sys.argv[0]), e))
+        opts, files = getopt.getopt(
+            sys.argv[1:],
+            "hVUF:S",
+            ["help", "version", "format", "show-source"],
+        )
+    except getopt.GetoptError(e):
+        sys.stderr.write("%s: %s\n" % (os.path.basename(sys.argv[0]), e))
         sys.exit(-1)
 
     format = "classic"
-    asm, header = False, False
+    show_source = False, False
     for opt, val in opts:
-        if opt in ('-h', '--help'):
+        if opt in ("-h", "--help"):
             print(__doc__)
             sys.exit(1)
-        elif opt in ('-V', '--version'):
+        elif opt in ("-V", "--version"):
             print("%s %s" % (program, __version__))
             sys.exit(0)
-        elif opt in ('-H', '--header'):
-            header = True
-        elif opt in ('--no-header'):
-            header = False
-        elif opt in ('-F', '--format'):
+        elif opt in ("-F", "--format"):
             if val not in FORMATS:
-                sys.stderr.write(("Invalid format option %s\n" +
-                                 "Should be one of: %s\n") %
-                                 (val, ", ".join(FORMATS)))
+                sys.stderr.write(
+                    ("Invalid format option %s\n" + "Should be one of: %s\n")
+                    % (val, ", ".join(FORMATS))
+                )
                 sys.exit(2)
             format = val
+        elif opt in ("-S", "--show-source"):
+            show_source = True
         else:
             print(opt)
             sys.stderr.write(Usage_short)
@@ -123,8 +129,9 @@ Type -h for for full help.""" % program
             )
             continue
 
-        disassemble_file(path, sys.stdout, format)
+        disassemble_file(path, sys.stdout, format, show_source=show_source)
     return
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
